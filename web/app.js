@@ -1,24 +1,63 @@
-import { initializeApp } from './firebase_config.js';
+import { initializeFirebase } from './firebase_config.js';
 import { LoginForm, setupLoginFunction } from './components/LoginForm.js';
 import { AdminPanel, setupAdminFunctions } from './components/AdminPanel.js';
 
 const app = document.getElementById('app');
 
-const firebaseApp = initializeApp();
+const {
+    auth,
+    db,
+    storage,
+    serverTimestamp,
+    collection,
+    addDoc,
+    getDocs,
+    doc,
+    updateDoc,
+    deleteDoc,
+    query,
+    orderBy,
+    ref,
+    uploadBytes,
+    getDownloadURL
+} = initializeFirebase();
 
-setupLoginFunction(firebase);
-setupAdminFunctions(firebase);
+const firebaseWrapper = {
+    auth,
+    db,
+    storage,
+    serverTimestamp,
+    collection,
+    addDoc,
+    getDocs,
+    doc,
+    updateDoc,
+    deleteDoc,
+    query,
+    orderBy,
+    ref,
+    uploadBytes,
+    getDownloadURL
+};
+
+setupLoginFunction(firebaseWrapper);
+setupAdminFunctions(firebaseWrapper);
 
 function renderApp() {
-    const user = firebase.auth().currentUser;
+    const user = auth.currentUser;
     if (user) {
         app.innerHTML = AdminPanel();
-        window.showSection('dashboard'); // Varsayılan olarak dashboard'u göster
+        if (window.showSection) {
+            window.showSection('dashboard');
+        }
     } else {
         app.innerHTML = LoginForm();
     }
 }
 
-firebase.auth().onAuthStateChanged(renderApp);
+auth.onAuthStateChanged(renderApp);
 
 renderApp();
+
+// Global olarak firebase nesnesini ekleyelim (eğer gerekliyse)
+window.firebaseWrapper = firebaseWrapper;

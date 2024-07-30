@@ -1,4 +1,5 @@
-// LoginForm.js
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js";
+
 
 const ADMIN_EMAIL = "mra@admin.com"; // Burayı kendi admin e-posta adresinizle değiştirin
 
@@ -14,7 +15,6 @@ export function LoginForm() {
         </div>
     `;
 }
-
 export function setupLoginFunction(firebase) {
     window.login = function () {
         const email = document.getElementById('email').value;
@@ -25,9 +25,8 @@ export function setupLoginFunction(firebase) {
             return;
         }
 
-        firebase.auth().signInWithEmailAndPassword(email, password)
+        signInWithEmailAndPassword(firebase.auth, email, password)
             .then((userCredential) => {
-                // Başarılı giriş
                 console.log("Logged in successfully");
             })
             .catch((error) => {

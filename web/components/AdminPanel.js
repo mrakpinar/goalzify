@@ -67,6 +67,7 @@ export function setupAdminFunctions(firebase) {
             loadUsers();
         }
     }
+
     window.addContent = function (event) {
         event.preventDefault();
 
@@ -75,7 +76,7 @@ export function setupAdminFunctions(firebase) {
         const category = document.getElementById('category').value;
         const imageFile = document.getElementById('image').files[0];
 
-        const user = firebase.auth().currentUser;
+        const user = firebase.auth.currentUser;
         if (!user) {
             alert("You must be logged in to add content.");
             return;
@@ -87,9 +88,9 @@ export function setupAdminFunctions(firebase) {
         }
 
         if (imageFile) {
-            const storageRef = firebase.storage().ref('content_images/' + imageFile.name);
-            storageRef.put(imageFile).then((snapshot) => {
-                snapshot.ref.getDownloadURL().then((imageUrl) => {
+            const storageRef = firebase.ref(firebase.storage, 'content_images/' + imageFile.name);
+            firebase.uploadBytes(storageRef, imageFile).then((snapshot) => {
+                firebase.getDownloadURL(snapshot.ref).then((imageUrl) => {
                     saveContent(title, content, category, imageUrl);
                 });
             });
@@ -98,13 +99,15 @@ export function setupAdminFunctions(firebase) {
         }
     }
 
+    // Save content to Firestore
+
     function saveContent(title, content, category, imageUrl = null) {
-        firebase.firestore().collection("content").add({
+        firebase.addDoc(firebase.collection(firebase.db, "content"), {
             title: title,
             content: content,
             category: category,
             imageUrl: imageUrl,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            timestamp: firebase.serverTimestamp()
         })
             .then(() => {
                 alert("Content added successfully");
@@ -115,10 +118,12 @@ export function setupAdminFunctions(firebase) {
                 alert("Error adding content: " + error);
             });
     }
+
     window.loadContent = function () {
         const contentList = document.getElementById('contentListItems');
         contentList.innerHTML = 'Loading content...';
-        firebase.firestore().collection("content").orderBy("timestamp", "desc").get()
+        const q = firebase.query(firebase.collection(firebase.db, "content"), firebase.orderBy("timestamp", "desc"));
+        firebase.getDocs(q)
             .then((querySnapshot) => {
                 contentList.innerHTML = '';
                 querySnapshot.forEach((doc) => {
@@ -134,33 +139,17 @@ export function setupAdminFunctions(firebase) {
                 });
             });
     }
-
-    window.loadUsers = function () {
-        const userList = document.getElementById('userList');
-        userList.innerHTML = 'Loading users...';
-        firebase.firestore().collection("users").get()
-            .then((querySnapshot) => {
-                userList.innerHTML = '';
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    userList.innerHTML += `
-                        <div class="user-item">
-                            <p>Email: ${data.email}</p>
-                            <p>Role: ${data.role || 'User'}</p>
-                        </div>
-                    `;
-                });
-            });
-    }
+    // Edit content in Firestore
     window.editContent = function (docId) {
-        firebase.firestore().collection("content").doc(docId).get()
+        const docRef = doc(db, "content", docId);
+        getDocs(docRef)
             .then((doc) => {
-                if (doc.exists) {
+                if (doc.exists()) {
                     const data = doc.data();
                     const newTitle = prompt("Edit title:", data.title);
                     const newContent = prompt("Edit content:", data.content);
                     if (newTitle !== null && newContent !== null) {
-                        firebase.firestore().collection("content").doc(docId).update({
+                        updateDoc(docRef, {
                             title: newTitle,
                             content: newContent
                         })
@@ -175,10 +164,9 @@ export function setupAdminFunctions(firebase) {
                 }
             });
     }
-
     window.deleteContent = function (docId) {
         if (confirm("Are you sure you want to delete this content?")) {
-            firebase.firestore().collection("content").doc(docId).delete()
+            deleteDoc(doc(db, "content", docId))
                 .then(() => {
                     alert("Content deleted successfully");
                     loadContent();
@@ -189,12 +177,30 @@ export function setupAdminFunctions(firebase) {
         }
     }
 
+    window.loadUsers = function () {
+        const userList = document.getElementById('userList');
+        userList.innerHTML = 'Loading users...';
+        getDocs(collection(db, "users"))
+            .then((querySnapshot) => {
+                userList.innerHTML = '';
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    userList.innerHTML += `
+                        <div class="user-item">
+                            <p>Email: ${data.email}</p>
+                            <p>Role: ${data.role || 'User'}</p>
+                        </div>
+                    `;
+                });
+            });
+    }
+
     window.logout = function () {
         firebase.auth().signOut();
     }
 
     // Firebase'in yüklendiğinden emin olduktan sonra içeriği yükle
-    firebase.auth().onAuthStateChanged(function (user) {
+    firebase.auth.onAuthStateChanged(function (user) {
         if (user) {
             loadContent();
         }
