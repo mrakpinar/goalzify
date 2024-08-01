@@ -11,7 +11,7 @@ void main() async {
 }
 
 class AdminPanelApp extends StatelessWidget {
-  const AdminPanelApp({Key? key}) : super(key: key);
+  const AdminPanelApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class AdminPanelApp extends StatelessWidget {
 }
 
 class AdminPanelHome extends StatelessWidget {
-  const AdminPanelHome({Key? key}) : super(key: key);
+  const AdminPanelHome({super.key});
 
   @override
   Widget build(BuildContext context) {

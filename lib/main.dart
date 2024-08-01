@@ -5,7 +5,19 @@ import 'package:goalzify/screens/auth/auth_gate.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    if (e is FirebaseException && e.code == 'duplicate-app') {
+      Firebase.app(); // Mevcut uygulamayı al
+    } else {
+      rethrow;
+    }
+  }
+
   runApp(const MyApp());
 }
 

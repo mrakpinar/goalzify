@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:goalzify/screens/auth/auth_service.dart';
+import 'package:goalzify/screens/goals_screen.dart';
+import 'package:goalzify/screens/reminder_screen.dart';
 import 'package:goalzify/screens/settings_screen.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -40,6 +42,48 @@ class MyDrawer extends StatelessWidget {
                   onTap: () {
                     // pop the drawer
                     Navigator.pop(context);
+                  },
+                ),
+              ),
+
+              // Reminder ListTile
+              Padding(
+                padding: const EdgeInsets.only(left: 25.0),
+                child: ListTile(
+                  title: const Text("R E M I N D E R"),
+                  leading: const Icon(Icons.more_time_rounded),
+                  onTap: () {
+                    // pop the drawer
+                    Navigator.pop(context);
+
+                    // navigate to reminder screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ReminderScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // Goals ListTile
+              Padding(
+                padding: const EdgeInsets.only(left: 25.0),
+                child: ListTile(
+                  title: const Text("G O A L S"),
+                  leading: const Icon(Icons.track_changes_sharp),
+                  onTap: () {
+                    // pop the drawer
+                    Navigator.pop(context);
+
+                    // navigate to goals screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const GoalsScreen(),
+                      ),
+                    );
                   },
                 ),
               ),

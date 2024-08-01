@@ -34,5 +34,11 @@ class AuthService {
     return await _auth.signOut();
   }
 
+  // get current user
+  String? getCurrentUserEmail() {
+    User? user = _auth.currentUser;
+    return user?.email;
+  }
+
   // errors
 }

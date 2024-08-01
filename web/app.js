@@ -1,6 +1,15 @@
-import { initializeFirebase } from './firebase_config.js';
-import { LoginForm, setupLoginFunction } from './components/LoginForm.js';
-import { AdminPanel, setupAdminFunctions } from './components/AdminPanel.js';
+import {
+    initializeFirebase
+} from './firebase_config.js';
+import {
+    LoginForm,
+    setupLoginFunction
+} from './components/LoginForm.js';
+import {
+    AdminPanel,
+    setupAdminFunctions
+} from './components/AdminPanel.js';
+
 
 const app = document.getElementById('app');
 

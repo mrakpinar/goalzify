@@ -14,7 +14,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-storage.js";
 
-
 const firebaseConfig = {
     apiKey: "AIzaSyAqtlhVI5N_JUNIwdg26rhvZBPnO2Ku70Q",
     authDomain: "goalzify-aa5a6.firebaseapp.com",

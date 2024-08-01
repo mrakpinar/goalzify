@@ -47,27 +47,28 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-      apiKey: "AIzaSyAqtlhVI5N_JUNIwdg26rhvZBPnO2Ku70Q",
-      authDomain: "goalzify-aa5a6.firebaseapp.com",
-      projectId: "goalzify-aa5a6",
-      storageBucket: "goalzify-aa5a6.appspot.com",
-      messagingSenderId: "1059881546953",
-      appId: "1:1059881546953:web:b96f732d27e8cd585c4918");
+      apiKey: "API_KEY",
+      authDomain: "AUTH_DOAIN",
+      projectId: "PROJECT_ID",
+      storageBucket: "STORAGE_BUCKET",
+      messagingSenderId: "MESSAGING_SENDER_ID",
+      appId: "APP_ID",
+  );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyD77gtNtzrRVZ3V5TSvZ9JED-q1_-2hs-o',
-    appId: '1:1059881546953:android:b9a02f1f1ba967a55c4918',
-    messagingSenderId: '1059881546953',
-    projectId: 'goalzify-aa5a6',
-    storageBucket: 'goalzify-aa5a6.appspot.com',
+      apiKey: "API_KEY",
+      projectId: "PROJECT_ID",
+      storageBucket: "STORAGE_BUCKET",
+      messagingSenderId: "MESSAGING_SENDER_ID",
+      appId: "APP_ID",
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAA4QK9ZTbtxtSJyQf7Y3HBh4cvPXOa9Rw',
-    appId: '1:1059881546953:ios:529d2c34ccfbce815c4918',
-    messagingSenderId: '1059881546953',
-    projectId: 'goalzify-aa5a6',
-    storageBucket: 'goalzify-aa5a6.appspot.com',
-    iosBundleId: 'com.example.goalzify',
+    apiKey: "API_KEY",
+      projectId: "PROJECT_ID",
+      storageBucket: "STORAGE_BUCKET",
+      messagingSenderId: "MESSAGING_SENDER_ID",
+      appId: "APP_ID",
+      iosBundleId: 'IOS_BUNDLE_ID',
   );
 }
