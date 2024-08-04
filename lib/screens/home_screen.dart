@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:goalzify/components/my_daily_reminders_section.dart';
 import 'package:goalzify/components/my_drawer.dart';
-import 'package:goalzify/screens/auth/auth_service.dart';
+import 'package:goalzify/components/my_goals.dart';
+import 'package:goalzify/components/my_progression.dart';
+import 'package:goalzify/components/my_user_profile_and_motivation_summary.dart';
 import 'package:goalzify/screens/content_detail_screen.dart';
 import 'package:goalzify/services/contents_service.dart';
 import 'package:goalzify/components/my_carousel.dart';
@@ -8,30 +11,22 @@ import 'package:goalzify/services/motivation_service.dart';
 import 'package:goalzify/styles.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({super.key});
+  const HomeScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   final ContentService _contentService = ContentService();
   final MotivationService _motivationService = MotivationService();
-  String? email;
   int motivationValue = 0;
 
   @override
   void initState() {
     super.initState();
-    _loadUserEmail();
     _loadMotivation();
-  }
-
-  Future<void> _loadUserEmail() async {
-    final auth = AuthService();
-    setState(() {
-      email = auth.getCurrentUserEmail();
-    });
   }
 
   Future<void> _loadMotivation() async {
@@ -64,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildGoalsSection(context),
             _buildDailyRemindersSection(context),
             _buildProgressStats(context),
-            _buildMotivationalContent(context),
+            // _buildMotivationalContent(context),
             _buildGamificationSection(context),
             _buildCommunityAndSharing(context),
             _buildMeditationAndMindfulness(context),
@@ -78,26 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildUserProfileAndMotivationSummary() {
     // Kullanıcı profili ve motivasyon özeti için bir widget
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-      child: Card(
-        color: Colors.grey.shade300,
-        child: ListTile(
-          leading: const CircleAvatar(
-            backgroundImage: NetworkImage(
-                'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'),
-          ),
-          title: email != null
-              ? Text(
-                  email!,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w700, color: Colors.grey.shade900),
-                )
-              : const Text("Loading..."),
-          subtitle: Text("Son motivasyon: $motivationValue%"),
-        ),
-      ),
-    );
+    return MyUserProfileAndMotivationSummary();
   }
 
   Widget _buildContentCarousel() {
@@ -139,115 +115,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildGoalsSection(BuildContext context) {
     // Hedefler bölümü için bir widget
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text("G o a l s", style: AppStyles.homeScreenSectionTitle),
-          Divider(
-            color: Colors.grey.shade400,
-            thickness: 2,
-          ),
-          // Hedef kartları burada gösterilebilir
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
-            child: Card(
-              color: Colors.grey.shade300,
-              child: const Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Goals title"),
-                    Text("Date"),
-                    Icon(Icons.check_box),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
-            child: Card(
-              color: Colors.grey.shade300,
-              child: const Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Goals title"),
-                    Text("Date"),
-                    Icon(Icons.check_box_outline_blank_sharp),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
-            child: Card(
-              color: Colors.grey.shade300,
-              child: const Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Goals title"),
-                    Text("Date"),
-                    Icon(Icons.check_box),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    return const MyGoals();
   }
 
   Widget _buildDailyRemindersSection(BuildContext context) {
     // Günlük hatırlatıcılar ve bildirimler bölümü için bir widget
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text("D A I L Y   R E M I N D E R",
-              style: AppStyles.homeScreenSectionTitle),
-          Divider(
-            color: Colors.grey.shade400,
-            thickness: 2,
-          ),
-          // Hatırlatıcılar burada listelenebilir
-        ],
-      ),
-    );
+    return const MyDailyRemindersSection();
   }
 
   Widget _buildProgressStats(BuildContext context) {
     // İlerleme grafikleri ve istatistikler bölümü için bir widget
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("İlerleme", style: Theme.of(context).textTheme.bodyLarge),
-          // İstatistikler ve grafikler burada gösterilebilir
-        ],
-      ),
-    );
+    return const MyProgression();
   }
 
   Widget _buildMotivationalContent(BuildContext context) {
     // Motivasyonel içerikler bölümü için bir widget
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("Motivasyon İçerikleri",
-              style: Theme.of(context).textTheme.bodyLarge),
+          Text("M O T I V A T I O N  C O N T E N T S",
+              style: AppStyles.homeScreenSectionTitle),
+          Divider(
+            color: Colors.grey.shade400,
+            thickness: 2,
+          ),
           // Motivasyonel içerikler burada listelenebilir
         ],
       ),
@@ -257,12 +150,39 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildGamificationSection(BuildContext context) {
     // Gamifikasyon bölümü için bir widget
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("Gamifikasyon", style: Theme.of(context).textTheme.bodyLarge),
+          Text(
+            "A C H I E V E M E N T S",
+            style: AppStyles.homeScreenSectionTitle,
+          ),
+          Divider(
+            color: Colors.grey.shade400,
+            thickness: 2,
+          ),
           // Rozetler, puanlar vb. burada gösterilebilir
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Image.asset(
+                  "./assets/images/rozet.png",
+                  height: 100,
+                ),
+                Image.asset(
+                  "./assets/images/rozet.png",
+                  height: 100,
+                ),
+                Image.asset(
+                  "./assets/images/rozet.png",
+                  height: 100,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:goalzify/screens/achievements_screen.dart';
 import 'package:goalzify/screens/auth/auth_service.dart';
 import 'package:goalzify/screens/goals_screen.dart';
 import 'package:goalzify/screens/reminder_screen.dart';
@@ -46,6 +47,26 @@ class MyDrawer extends StatelessWidget {
                 ),
               ),
 
+              // Goals ListTile
+              Padding(
+                padding: const EdgeInsets.only(left: 25.0),
+                child: ListTile(
+                  title: const Text("G O A L S"),
+                  leading: const Icon(Icons.track_changes_sharp),
+                  onTap: () {
+                    // pop the drawer
+                    Navigator.pop(context);
+
+                    // navigate to goals screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const GoalsScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ),
               // Reminder ListTile
               Padding(
                 padding: const EdgeInsets.only(left: 25.0),
@@ -67,12 +88,12 @@ class MyDrawer extends StatelessWidget {
                 ),
               ),
 
-              // Goals ListTile
+              // Achievements ListTile
               Padding(
                 padding: const EdgeInsets.only(left: 25.0),
                 child: ListTile(
-                  title: const Text("G O A L S"),
-                  leading: const Icon(Icons.track_changes_sharp),
+                  title: const Text("A C H I E V E M E N T S"),
+                  leading: const Icon(Icons.emoji_events_outlined),
                   onTap: () {
                     // pop the drawer
                     Navigator.pop(context);
@@ -81,7 +102,7 @@ class MyDrawer extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const GoalsScreen(),
+                        builder: (context) => const AchievementsScreen(),
                       ),
                     );
                   },

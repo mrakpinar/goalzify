@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:goalzify/services/motivation_service.dart';
+import 'package:goalzify/styles.dart';
 
 class ContentDetailScreen extends StatelessWidget {
   final Map<String, dynamic> content;
@@ -12,17 +14,26 @@ class ContentDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            (content['title'] ?? 'Content Detail').toString().toUpperCase()),
+          (content['title'] ?? 'Content Detail').toString().toUpperCase(),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(
-              content['imageUrl'],
-              width: double.infinity,
-              height: 250,
-              fit: BoxFit.scaleDown,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: ClipRRect(
+                borderRadius:
+                    BorderRadius.circular(16.0), // Kenarları yuvarlama yarıçapı
+                child: Image.network(
+                  content['imageUrl'],
+                  width: double.infinity,
+                  height: 250,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -31,11 +42,10 @@ class ContentDetailScreen extends StatelessWidget {
                 children: [
                   Center(
                     child: Text(
-                      content['title'] ?? 'No Title',
-                      style: TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade800),
+                      (content['title'] ?? 'Content Detail')
+                          .toString()
+                          .toUpperCase(),
+                      style: AppStyles.contentDetailTitle,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -44,10 +54,7 @@ class ContentDetailScreen extends StatelessWidget {
                         horizontal: 15.0, vertical: 10.0),
                     child: Text(
                       content['content'] ?? 'No content available',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade600),
+                      style: AppStyles.contentTextStyle,
                     ),
                   ),
                   Center(
