@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:goalzify/components/my_card.dart';
@@ -8,6 +9,8 @@ class MyGoals extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String userId = FirebaseAuth.instance.currentUser!.uid;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25),
       child: Column(
@@ -20,7 +23,10 @@ class MyGoals extends StatelessWidget {
           ),
           // Goals will be shown here
           StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('goals').snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection('goals')
+                .where('userId', isEqualTo: userId)
+                .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -41,7 +47,7 @@ class MyGoals extends StatelessWidget {
                   children: goals.map((doc) {
                     var data = doc.data() as Map<String, dynamic>;
                     return MyCard(
-                      goal: data['goal'],
+                      goal: data['title'],
                       isCompleted: data['completed'],
                       onStatusChanged: (bool? value) async {
                         // Update the completed status of the goal

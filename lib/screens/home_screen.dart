@@ -9,6 +9,7 @@ import 'package:goalzify/services/contents_service.dart';
 import 'package:goalzify/components/my_carousel.dart';
 import 'package:goalzify/services/motivation_service.dart';
 import 'package:goalzify/styles.dart';
+import 'package:goalzify/widgets/compact_reminders_section.dart'; // Add this import
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -40,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade200,
+      backgroundColor: Colors.blueGrey[50],
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Image.asset(
@@ -56,11 +57,10 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildUserProfileAndMotivationSummary(),
             _buildContentCarousel(),
             const SizedBox(height: 20),
-            _buildGoalsSection(context),
-            _buildDailyRemindersSection(context),
-            _buildProgressStats(context),
-            // _buildMotivationalContent(context),
-            _buildGamificationSection(context),
+            // _buildGoalsSection(context),
+            // _buildRemindersSection(context),
+            // _buildProgressStats(context),
+            // _buildGamificationSection(context),
             _buildCommunityAndSharing(context),
             _buildMeditationAndMindfulness(context),
             _buildFeaturedTasks(context),
@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildUserProfileAndMotivationSummary() {
     // Kullanıcı profili ve motivasyon özeti için bir widget
-    return MyUserProfileAndMotivationSummary();
+    return const MyUserProfileAndMotivationSummary();
   }
 
   Widget _buildContentCarousel() {
@@ -118,33 +118,26 @@ class _HomeScreenState extends State<HomeScreen> {
     return const MyGoals();
   }
 
-  Widget _buildDailyRemindersSection(BuildContext context) {
+  Widget _buildRemindersSection(BuildContext context) {
     // Günlük hatırlatıcılar ve bildirimler bölümü için bir widget
-    return const MyDailyRemindersSection();
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+        ),
+        MyDailyRemindersSection(),
+        Center(child: CompactRemindersSection()),
+        SizedBox(
+          height: 25,
+        )
+      ],
+    );
   }
 
   Widget _buildProgressStats(BuildContext context) {
     // İlerleme grafikleri ve istatistikler bölümü için bir widget
     return const MyProgression();
-  }
-
-  Widget _buildMotivationalContent(BuildContext context) {
-    // Motivasyonel içerikler bölümü için bir widget
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text("M O T I V A T I O N  C O N T E N T S",
-              style: AppStyles.homeScreenSectionTitle),
-          Divider(
-            color: Colors.grey.shade400,
-            thickness: 2,
-          ),
-          // Motivasyonel içerikler burada listelenebilir
-        ],
-      ),
-    );
   }
 
   Widget _buildGamificationSection(BuildContext context) {

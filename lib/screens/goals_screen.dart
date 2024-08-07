@@ -1,6 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:goalzify/styles.dart';
+import 'package:lottie/lottie.dart';
 
 class GoalsScreen extends StatefulWidget {
   const GoalsScreen({super.key});
@@ -11,29 +12,39 @@ class GoalsScreen extends StatefulWidget {
 
 class _GoalsScreenState extends State<GoalsScreen> {
   final TextEditingController _goalController = TextEditingController();
+  final TextEditingController _goalTitleController = TextEditingController();
   final List<Map<String, dynamic>> _goals = [];
-  bool _isLoading = false;
+
+  final String userId = FirebaseAuth.instance.currentUser!.uid;
 
   void _addGoal() async {
-    if (_goalController.text.isNotEmpty) {
-      setState(() {
-        _isLoading = true;
-      });
+    if (_goalController.text.isNotEmpty &&
+        _goalTitleController.text.isNotEmpty) {
+      setState(() {});
 
       String goal = _goalController.text;
+      String title = _goalTitleController.text;
 
       // Add goal to Firestore with initial status of not completed
       DocumentReference docRef =
           await FirebaseFirestore.instance.collection('goals').add({
         'goal': goal,
+        'title': title,
         'completed': false,
         'timestamp': FieldValue.serverTimestamp(),
+        'userId': userId,
       });
 
       setState(() {
-        _goals.add({'id': docRef.id, 'goal': goal, 'completed': false});
+        _goals.add({
+          'id': docRef.id,
+          'goal': goal,
+          'title': title,
+          'completed': false
+        });
+        showSnackbar("Goal added!");
         _goalController.clear();
-        _isLoading = false;
+        _goalTitleController.clear();
       });
     }
   }
@@ -48,6 +59,11 @@ class _GoalsScreenState extends State<GoalsScreen> {
       // Update the local list of goals
       int index = _goals.indexWhere((goal) => goal['id'] == id);
       _goals[index]['completed'] = !currentStatus;
+
+      if (_goals[index]['completed'] == true) {
+        showSnackbar("Goal completed!");
+        _showGoalCompletedDialog();
+      }
     });
   }
 
@@ -59,129 +75,219 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
   void _loadGoals() async {
     // Load goals from Firestore
-    QuerySnapshot snapshot =
-        await FirebaseFirestore.instance.collection('goals').get();
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('goals')
+        .where('userId', isEqualTo: userId)
+        .get();
 
     setState(() {
-      _goals.clear();
       for (var doc in snapshot.docs) {
         _goals.add({
           'id': doc.id,
           'goal': doc['goal'],
+          'title': doc['title'],
           'completed': doc['completed'],
         });
       }
     });
   }
 
+  // Method to show snackbar
+  void showSnackbar(String snackText) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(snackText),
+      ),
+    );
+  }
+
+  void _showAddGoalDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Add New Goal'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _goalTitleController,
+                decoration: const InputDecoration(hintText: 'Enter goal title'),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _goalController,
+                decoration:
+                    const InputDecoration(hintText: 'Enter goal content'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                _addGoal();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showGoalCompletedDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent, // Dialog arka planını şeffaf yap
+          child: Stack(
+            children: [
+              // Arka planda havai fişek animasyonu
+              Positioned.fill(
+                child: Lottie.asset('assets/fireworks.json', fit: BoxFit.fill),
+              ),
+              // Modal içeriği
+              Center(
+                child: AlertDialog(
+                  title: Text("Goal Completed!"),
+                  backgroundColor:
+                      Colors.white, // Modal içeriğinin arka plan rengi
+                  content: SizedBox(
+                    height: 150,
+                    child: Center(
+                      child: Text("Congratulations on completing the goal!"),
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Close'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey[100],
       appBar: AppBar(
         title: Text(
           "Goals",
-          style: AppStyles.screenTitleTextStyle,
+          style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold), // AppBar başlık stilini ayarla
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blueGrey[700],
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_sharp,
+            color: Colors.white,
+          ),
+        ),
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 25.0),
+            child: Icon(
+              Icons.track_changes_sharp,
+              color: Colors.white,
+              size: 35,
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            TextField(
-              controller: _goalController,
-              decoration: InputDecoration(
-                hintText: "Enter your goal",
-                hintStyle: AppStyles.inputHintTextStyle,
-                filled: true,
-                fillColor: Colors.grey.shade100,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                    vertical: 15.0, horizontal: 20.0),
-                suffixIcon: _isLoading
-                    ? const Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.amber),
-                        ),
-                      )
-                    : IconButton(
-                        icon: const Icon(
-                          Icons.add,
-                          size: 30,
-                        ),
-                        onPressed: _addGoal,
-                      ),
-              ),
-              style: AppStyles.inputTextStyle,
-            ),
-            const SizedBox(height: 20),
             Expanded(
-              child: _goals.isEmpty
-                  ? const Center(
-                      child: Text(
-                        "No goals added yet!",
-                        style: AppStyles.goalTextStyle,
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: _goals.length,
-                      itemBuilder: (context, index) {
-                        bool isCompleted = _goals[index]['completed'];
-                        return Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          margin: const EdgeInsets.symmetric(vertical: 10.0),
-                          color: isCompleted
-                              ? Colors.green.shade300
-                              : Colors.white,
-                          child: ListTile(
-                            title: Text(
-                              _goals[index]['goal'],
-                              style: AppStyles.goalTextStyle.copyWith(
-                                decoration: isCompleted
-                                    ? TextDecoration.lineThrough
-                                    : TextDecoration.none,
-                                color: isCompleted
-                                    ? Colors.grey.shade600
-                                    : Colors.black87,
-                              ),
-                            ),
-                            leading: Checkbox(
-                              value: isCompleted,
-                              onChanged: (bool? value) {
-                                _toggleGoalStatus(
-                                    _goals[index]['id'], isCompleted);
-                              },
-                            ),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete,
-                                  color: Colors.redAccent),
-                              onPressed: () async {
-                                // Remove goal from Firestore
-                                await FirebaseFirestore.instance
-                                    .collection('goals')
-                                    .doc(_goals[index]['id'])
-                                    .delete();
-
-                                setState(() {
-                                  _goals.removeAt(index);
-                                });
-                              },
-                            ),
-                          ),
-                        );
-                      },
+              child: ListView.builder(
+                itemCount: _goals.length,
+                itemBuilder: (context, index) {
+                  var goal = _goals[index];
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
                     ),
+                    margin: const EdgeInsets.symmetric(vertical: 10.0),
+                    color: goal['completed']
+                        ? Colors.green.shade300
+                        : Colors.white,
+                    child: ListTile(
+                      title: Text(
+                        goal['title'],
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          decoration: goal['completed']
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                          color: goal['completed']
+                              ? Colors.grey.shade600
+                              : Colors.black87,
+                        ),
+                      ),
+                      subtitle: Text(
+                        goal['goal'],
+                        style: TextStyle(
+                          decoration: goal['completed']
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                          color: goal['completed']
+                              ? Colors.grey.shade600
+                              : Colors.black87,
+                        ),
+                      ),
+                      leading: Checkbox(
+                        value: goal['completed'],
+                        onChanged: (bool? value) {
+                          _toggleGoalStatus(goal['id'], goal['completed']);
+                        },
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.redAccent),
+                        onPressed: () async {
+                          await FirebaseFirestore.instance
+                              .collection('goals')
+                              .doc(goal['id'])
+                              .delete();
+
+                          showSnackbar("Goal Deleted!");
+
+                          setState(() {
+                            _goals.removeAt(index);
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blueGrey[700],
+        onPressed: _showAddGoalDialog,
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
         ),
       ),
     );

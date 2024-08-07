@@ -7,7 +7,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:8.0.0'  // Güncel Android Gradle eklentisi
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"  // Güncel Kotlin Gradle eklentisi
         classpath 'com.google.gms:google-services:4.3.15'
     }
 }

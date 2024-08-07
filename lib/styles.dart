@@ -33,7 +33,7 @@ class AppStyles {
   static TextStyle screenTitleTextStyle = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w500,
-    color: Colors.grey.shade700,
+    color: Colors.white,
   );
 
   // Text styles for input hint text
@@ -60,5 +60,11 @@ class AppStyles {
     fontSize: 18,
     fontWeight: FontWeight.w600,
     color: Colors.black87,
+  );
+
+  // Text style for goal content
+  static const goalContentTextStyle = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w300,
   );
 }

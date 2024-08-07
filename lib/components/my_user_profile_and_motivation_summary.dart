@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:goalzify/screens/auth/auth_service.dart';
+import 'package:goalzify/screens/profile_screen.dart';
 import 'package:goalzify/services/motivation_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MyUserProfileAndMotivationSummary extends StatefulWidget {
-  MyUserProfileAndMotivationSummary({super.key});
+  const MyUserProfileAndMotivationSummary({super.key});
 
   @override
   State<MyUserProfileAndMotivationSummary> createState() =>
@@ -13,21 +15,30 @@ class MyUserProfileAndMotivationSummary extends StatefulWidget {
 class _MyUserProfileAndMotivationSummaryState
     extends State<MyUserProfileAndMotivationSummary> {
   final MotivationService _motivationService = MotivationService();
-  String? email;
-  int motivationValue = 0;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  String? userName;
+  int motivationValue = 10;
+  String? profileImageUrl;
 
   @override
   void initState() {
     super.initState();
-    _loadUserEmail();
+    _loadUserData();
     _loadMotivation();
   }
 
-  Future<void> _loadUserEmail() async {
-    final auth = AuthService();
-    setState(() {
-      email = auth.getCurrentUserEmail();
-    });
+  Future<void> _loadUserData() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot userData =
+          await _firestore.collection('users').doc(user.uid).get();
+      setState(() {
+        userName = "${userData['firstName']} ${userData['lastName']}";
+        profileImageUrl = userData['profileImageUrl'];
+      });
+    }
   }
 
   Future<void> _loadMotivation() async {
@@ -38,25 +49,42 @@ class _MyUserProfileAndMotivationSummaryState
     });
   }
 
+  void onTap() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProfileScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-      child: Card(
-        color: Colors.grey.shade300,
-        child: ListTile(
-          leading: const CircleAvatar(
-            backgroundImage: NetworkImage(
-                'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Card(
+          color: Colors.blueGrey[700],
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundImage: profileImageUrl != null
+                  ? NetworkImage(profileImageUrl!)
+                  : const NetworkImage(
+                      'https://i.fbcd.co/products/resized/resized-750-500/d4c961732ba6ec52c0bbde63c9cb9e5dd6593826ee788080599f68920224e27d.webp'),
+            ),
+            title: userName != null
+                ? Text(
+                    userName!,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700, color: Colors.white),
+                  )
+                : const Text("Loading..."),
+            subtitle: Text(
+              "Son motivasyon: $motivationValue%",
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
-          title: email != null
-              ? Text(
-                  email!,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w700, color: Colors.grey.shade900),
-                )
-              : const Text("Loading..."),
-          subtitle: Text("Son motivasyon: $motivationValue%"),
         ),
       ),
     );

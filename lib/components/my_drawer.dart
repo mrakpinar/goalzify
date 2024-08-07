@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:goalzify/screens/achievements_screen.dart';
 import 'package:goalzify/screens/auth/auth_service.dart';
-import 'package:goalzify/screens/goals_screen.dart';
-import 'package:goalzify/screens/reminder_screen.dart';
+import 'package:goalzify/screens/goals_screen.dart' as goals;
+import 'package:goalzify/screens/meditation_screen.dart';
+import 'package:goalzify/screens/reminder_screen.dart' as reminders;
 import 'package:goalzify/screens/settings_screen.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -16,7 +17,7 @@ class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: Colors.blueGrey[100],
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -61,7 +62,7 @@ class MyDrawer extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const GoalsScreen(),
+                        builder: (context) => const goals.GoalsScreen(),
                       ),
                     );
                   },
@@ -81,7 +82,7 @@ class MyDrawer extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ReminderScreen(),
+                        builder: (context) => const reminders.ReminderScreen(),
                       ),
                     );
                   },
@@ -103,6 +104,27 @@ class MyDrawer extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => const AchievementsScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // meditation ListTile
+              Padding(
+                padding: const EdgeInsets.only(left: 25.0),
+                child: ListTile(
+                  title: const Text("M E D I T A T I O N"),
+                  leading: const Icon(Icons.self_improvement_outlined),
+                  onTap: () {
+                    // pop the drawer
+                    Navigator.pop(context);
+
+                    // navigate to goals screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MeditationScreen(),
                       ),
                     );
                   },

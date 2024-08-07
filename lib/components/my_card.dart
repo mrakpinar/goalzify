@@ -21,7 +21,7 @@ class MyCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(15.0),
       ),
       margin: const EdgeInsets.symmetric(vertical: 10.0),
-      color: isCompleted ? Colors.green.shade300 : Colors.grey.shade300,
+      color: isCompleted ? Colors.green.shade100 : Colors.grey.shade300,
       child: ListTile(
         title: Text(
           goal,
@@ -29,8 +29,7 @@ class MyCard extends StatelessWidget {
             fontSize: 18,
             fontWeight: FontWeight.w500,
             color: isCompleted ? Colors.grey.shade500 : Colors.grey.shade700,
-            decoration:
-                isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+            decoration: isCompleted ? TextDecoration.none : TextDecoration.none,
           ),
         ),
         leading: Checkbox(
@@ -38,7 +37,8 @@ class MyCard extends StatelessWidget {
           onChanged: onStatusChanged,
         ),
         trailing: IconButton(
-          icon: const Icon(Icons.delete, color: Colors.redAccent),
+          icon: Icon(Icons.delete,
+              color: isCompleted ? Colors.black : Colors.redAccent),
           onPressed: onDelete,
         ),
       ),

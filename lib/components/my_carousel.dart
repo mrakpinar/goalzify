@@ -15,7 +15,7 @@ class MyCarousel extends StatelessWidget {
   Widget build(BuildContext context) {
     return CarouselSlider(
       options: CarouselOptions(
-        height: 250,
+        height: 200,
         aspectRatio: 16 / 9,
         viewportFraction: 0.8,
         initialPage: 0,
@@ -61,13 +61,15 @@ class MyCarousel extends StatelessWidget {
                     bottom: 20,
                     left: 0,
                     right: 0,
-                    child: Center(
+                    child: Container(
+                      width: double.infinity,
+                      color: Colors.grey[200],
                       child: Text(
                         content['title'] ?? 'No Title',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                         textAlign: TextAlign.center,
                       ),
